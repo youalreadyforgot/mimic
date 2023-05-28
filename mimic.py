@@ -1,6 +1,7 @@
 #! Python 3
 from pynput import keyboard, mouse
 from pynput.mouse import Button, Controller
+from pynput.keyboard import Key, Controller as controller
 import time
 
 class ClickEvent:
@@ -8,6 +9,11 @@ class ClickEvent:
         self.button = button
         self.x = x
         self.y = y
+        self.timestamp = timestamp
+
+class KeyEvent:
+    def __init__(self,key,timestamp):
+        self.key = key
         self.timestamp = timestamp
 
 def on_key_press(key):
@@ -45,7 +51,21 @@ def repeat_clicks(repeat_infinitely=False):
             break
 
 
+def repeat_keys(repeat_infinitely=False):
+    keyboard = controller()
+    previous_timestamp = Keyevents[0].timestamp
+    while True:
+        for event in KeyEvents:
+            keyboard.press(event.Key)
+            keyboard.release(event.Key)
 
+            time_diff = event.timestamp - previous_timestamp
+            previous_timestamp = event.timestamp
+            if time_diff > 0:
+                time.sleep(time_diff)
+
+        if not repeat_infinitely:
+            break
 
 
 Clickevents = []
@@ -70,5 +90,5 @@ repeat_option = input('Enter repeat option ("infinitely" for infinite loop, any 
 repeat_infinitely = repeat_option.lower() == 'infinitely'
 
 repeat_clicks(repeat_infinitely)  # Repeat the recorded clicks
-
+repeat_keys(repeat_infinitely)
 
